@@ -1,8 +1,6 @@
 package main
 
 type Tile struct {
-  y Coord
-  x Coord
   ch rune
   blockMove bool
   blockSight bool
@@ -16,11 +14,19 @@ type Area struct {
 
 func NewArea(h,w int) *Area {
   t := make([]Tile, w*h)
-  SetPad(h,w)
+  SetPad(h,w) // set engines pad
   for y:=0; y < h; y++ {
     for x:=0; x < w; x++ {
-      t[x+y*w].ch = '.'
+      if y == 0 || x == 0 || y == h || x == w {
+        t[x+y*w] = Tile{'#',true,true}
+        continue
+      }
+      t[x+y*w] = Tile{'.',false,false}
     }
   }
   return &Area{t,h,w}
+}
+
+func (a *Area) IsBlocking(y,x Coord) bool {
+  return a.tiles[int(x)+int(y)*a.width].blockMove
 }

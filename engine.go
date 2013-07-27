@@ -35,14 +35,14 @@ func Clear() {
 
 
 func Draw(y Coord, x Coord, ch rune) {
-  GamePad.Mvaddch(int(y),int(x), int(ch))
+  GamePad.Mvaddch(int(y),int(x), ch)
   refreshPad(int(y),int(x))
 }
 
 func DrawMap(a *Area) {
   for y := 0; y < a.height; y++ {
     for x := 0; x < a.width; x++ {
-      GamePad.Mvaddch(y,x,int(a.tiles[x+y*a.width].ch))
+      GamePad.Mvaddch(y,x,a.tiles[x+y*a.width].ch)
     }
   }
 }

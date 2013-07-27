@@ -13,9 +13,9 @@ type Game struct {
 
 func (g *Game) Init() {
   g.state = "menu"
-  g.player = NewMob(5,5,'@')
-  g.mobs = append(g.mobs, g.player)
   g.area = NewArea(80,200)
+  g.player = NewMob(5,5,'@',g.area)
+  g.mobs = append(g.mobs, g.player)
 }
 
 func (s GameState) Menuing() bool {
