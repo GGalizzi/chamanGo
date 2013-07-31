@@ -13,7 +13,7 @@ type Game struct {
 
 func (g *Game) Init() {
   g.state = "menu"
-  g.area = NewArea(80,200)
+  g.area = NewArea(30,50)
   g.player = NewMob(5,5,'@',g.area)
   g.mobs = append(g.mobs, g.player)
 }
@@ -23,8 +23,8 @@ func (s GameState) Menuing() bool {
 }
 
 func Menu() GameState {
-  Write(5,5,"Welcome to Grogue (name in progress)")
-  Write(6,5,"Press any key to continue")
+  Write(Percent(25,ConsoleHeight),ConsoleWidth/2,"Welcome to Grogue (name in progress)")
+  Write(Percent(25,ConsoleHeight)+1,ConsoleWidth/2,"Press any key to continue")
   GetInput()
   Clear()
   return "playing"

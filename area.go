@@ -17,7 +17,7 @@ func NewArea(h,w int) *Area {
   SetPad(h,w) // set engines pad
   for y:=0; y < h; y++ {
     for x:=0; x < w; x++ {
-      if y == 0 || x == 0 || y == h || x == w {
+      if y == 0 || x == 0 || y == h-1 || x == w-1 {
         t[x+y*w] = Tile{'#',true,true}
         continue
       }

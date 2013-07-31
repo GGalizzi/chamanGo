@@ -1,12 +1,26 @@
 package main
 
 import "github.com/GGalizzi/gocurses"
+import "fmt"
 
-var GamePad *gocurses.Window
-var ScreenHeight int
-var ScreenWidth int
-var WorldHeight int
-var WorldWidth int
+type log struct {
+  pad *gocurses.Window // Pad used to display messages to player.
+  line int //line where the message will be added
+  dline int //line where we start showing messages.
+}
+
+var GamePad *gocurses.Window // Pad used to display play screen
+var debugWindow *gocurses.Window // Window used to show debug information (X,Y,stuff)
+var MessageLog log
+
+var ConsoleHeight int // height and
+var ConsoleWidth int  // width of the whole console the game was opened in
+
+var ScreenHeight int  // Height and width
+var ScreenWidth int   // of the playable screen GamePad
+
+var WorldHeight int   // Height and width of
+var WorldWidth int    // the area currently in.
 
 func Init() {
   gocurses.Initscr()
@@ -15,8 +29,11 @@ func Init() {
   gocurses.Stdscr.Keypad(true)
   gocurses.Curs_set(0)
 
-  ScreenHeight,ScreenWidth = gocurses.Getmaxyx()
-  ScreenHeight,ScreenWidth = Percent(90,ScreenHeight), Percent(90,ScreenWidth)
+  ConsoleHeight,ConsoleWidth = gocurses.Getmaxyx()
+  ScreenHeight,ScreenWidth = Percent(75,ConsoleHeight), Percent(90,ConsoleWidth)
+
+  debugWindow = gocurses.NewWindow(5,ConsoleWidth, ConsoleHeight-1,1)
+  MessageLog.pad  = gocurses.NewPad(100*10, ScreenWidth)
 }
 
 //Sets the GamePad and WH-WW info to the current area in the game object.
@@ -69,9 +86,18 @@ func Write(y int, x int, s string) {
 }
 
 func DebugLog(s string) {
-  gocurses.Mvaddstr(ScreenHeight+1,1,"                         ")
-  gocurses.Mvaddstr(ScreenHeight+1,1, s)
-  gocurses.Refresh()
+  debugWindow.Mvaddstr(0,0,"                         ")
+  debugWindow.Mvaddstr(0,0, s)
+  debugWindow.Refresh()
+}
+
+func (l *log) log(s string) {
+  l.pad.Mvaddstr(l.line,0,fmt.Sprintf("%v %d", s, l.line))
+  l.pad.PRefresh(l.dline,0,ScreenHeight+1,0,ConsoleHeight-2,ConsoleWidth)
+  if l.line >= ((ConsoleHeight-2)-(ScreenHeight+1)) {
+    l.dline++
+  }
+  l.line++
 }
 
 func GetInput() string {
