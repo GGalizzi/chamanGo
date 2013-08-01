@@ -10,7 +10,8 @@ func main() {
 
   for !g.state.Quiting() {
     if g.state.Menuing() {
-      g.state = Menu()
+      g.state = g.Menu()
+      continue
     }
     g.Output()
     g.Input()

@@ -6,26 +6,30 @@ type GameState string
 
 type Game struct {
   state GameState
-  mobs []*Mob
-  player *Mob
-  area *Area
+  Mobs []*Mob
+  Player *Mob
+  Area *Area
 }
 
 func (g *Game) Init() {
   g.state = "menu"
-  g.area = NewArea(30,50)
-  g.player = NewMob(5,5,'@',g.area)
-  g.mobs = append(g.mobs, g.player)
+  g.Area = NewArea(30,50)
+  g.Player = NewMob(5,5,'@',g.Area)
+  g.Mobs = append(g.Mobs, g.Player)
+  g.Mobs = append(g.Mobs, NewMob(2,2,'L',g.Area))
 }
 
 func (s GameState) Menuing() bool {
   return s == "menu"
 }
 
-func Menu() GameState {
+func (g *Game) Menu() GameState {
   Write(Percent(25,ConsoleHeight),ConsoleWidth/2,"Welcome to Grogue (name in progress)")
-  Write(Percent(25,ConsoleHeight)+1,ConsoleWidth/2,"Press any key to continue")
-  GetInput()
+  Write(Percent(25,ConsoleHeight)+1,ConsoleWidth/2,"Press any key to continue, press 'L' to load")
+  key := GetInput()
+  if key == "L" {
+    g.LoadGame()
+  }
   Clear()
   return "playing"
 }
@@ -35,32 +39,36 @@ func (s GameState) Quiting() bool {
 }
 
 func (g *Game) Output() {
-  DrawMap(g.area)
-  for _,m := range g.mobs {
-    Draw(m.y,m.x,m.ch)
+  DrawMap(g.Area)
+  for _,m := range g.Mobs {
+    Draw(m.Y,m.X,m.ch)
   }
-  DebugLog(fmt.Sprintf("X: %d, Y: %d", g.player.x,g.player.y))
+  RefreshPad(int(g.Player.Y),int(g.Player.X))
+  DebugLog(fmt.Sprintf("X: %d, Y: %d", g.Player.X,g.Player.Y))
 }
 func (g *Game) Input() {
   key := GetInput()
 
   switch key {
   case "8":
-    g.player.Move(-1,0)
+    g.Player.Move(-1,0)
   case "9":
-    g.player.Move(-1,1)
+    g.Player.Move(-1,1)
   case "6":
-    g.player.Move(0,1)
+    g.Player.Move(0,1)
   case "3":
-    g.player.Move(1,1)
+    g.Player.Move(1,1)
   case "2":
-    g.player.Move(1,0)
+    g.Player.Move(1,0)
   case "1":
-    g.player.Move(1,-1)
+    g.Player.Move(1,-1)
   case "4":
-    g.player.Move(0,-1)
+    g.Player.Move(0,-1)
   case "7":
-    g.player.Move(-1,-1)
+    g.Player.Move(-1,-1)
+  case "S":
+    g.SaveGame()
+    MessageLog.log("Game Saved")
   case "Q":
     g.state = "quit"
   }

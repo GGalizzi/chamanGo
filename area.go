@@ -1,15 +1,15 @@
 package main
 
 type Tile struct {
-  ch rune
-  blockMove bool
-  blockSight bool
+  Ch rune
+  BlockMove bool
+  BlockSight bool
 }
 
 type Area struct {
-  tiles []Tile
-  height int
-  width int
+  Tiles []Tile
+  Height int
+  Width int
 }
 
 func NewArea(h,w int) *Area {
@@ -28,5 +28,5 @@ func NewArea(h,w int) *Area {
 }
 
 func (a *Area) IsBlocking(y,x Coord) bool {
-  return a.tiles[int(x)+int(y)*a.width].blockMove
+  return a.Tiles[int(x)+int(y)*a.Width].BlockMove
 }

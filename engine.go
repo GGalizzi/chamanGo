@@ -1,7 +1,11 @@
 package main
 
-import "github.com/GGalizzi/gocurses"
-import "fmt"
+import (
+  "github.com/GGalizzi/gocurses"
+  "fmt"
+  "os"
+  "encoding/gob"
+)
 
 type log struct {
   pad *gocurses.Window // Pad used to display messages to player.
@@ -33,7 +37,7 @@ func Init() {
   ScreenHeight,ScreenWidth = Percent(75,ConsoleHeight), Percent(90,ConsoleWidth)
 
   debugWindow = gocurses.NewWindow(5,ConsoleWidth, ConsoleHeight-1,1)
-  MessageLog.pad  = gocurses.NewPad(100*10, ScreenWidth)
+  MessageLog.pad  = gocurses.NewPad(100, ScreenWidth)
 }
 
 //Sets the GamePad and WH-WW info to the current area in the game object.
@@ -53,19 +57,19 @@ func Clear() {
 
 func Draw(y Coord, x Coord, ch rune) {
   GamePad.Mvaddch(int(y),int(x), ch)
-  refreshPad(int(y),int(x))
+  //RefreshPad(int(y),int(x))
 }
 
 func DrawMap(a *Area) {
-  for y := 0; y < a.height; y++ {
-    for x := 0; x < a.width; x++ {
-      GamePad.Mvaddch(y,x,a.tiles[x+y*a.width].ch)
+  for y := 0; y < a.Height; y++ {
+    for x := 0; x < a.Width; x++ {
+      GamePad.Mvaddch(y,x,a.Tiles[x+y*a.Width].Ch)
     }
   }
 }
 
 
-func refreshPad(y int, x int) {
+func RefreshPad(y int, x int) {
   fromY := Max(0,y-ScreenHeight/2)
   fromX := Max(0,x-ScreenWidth/2)
 
@@ -77,7 +81,7 @@ func refreshPad(y int, x int) {
     fromX = (WorldWidth - ScreenWidth)
   }
 
-  GamePad.PRefresh(fromY,fromX, 0,0,ScreenHeight-1,ScreenWidth-1)
+  GamePad.PnoutRefresh(fromY,fromX, 0,0,ScreenHeight-1,ScreenWidth-1)
 }
 
 
@@ -88,18 +92,50 @@ func Write(y int, x int, s string) {
 func DebugLog(s string) {
   debugWindow.Mvaddstr(0,0,"                         ")
   debugWindow.Mvaddstr(0,0, s)
-  debugWindow.Refresh()
+  debugWindow.NoutRefresh()
 }
 
 func (l *log) log(s string) {
   l.pad.Mvaddstr(l.line,0,fmt.Sprintf("%v %d", s, l.line))
-  l.pad.PRefresh(l.dline,0,ScreenHeight+1,0,ConsoleHeight-2,ConsoleWidth)
+  l.pad.PnoutRefresh(l.dline,0,ScreenHeight+1,0,ConsoleHeight-2,ConsoleWidth)
   if l.line >= ((ConsoleHeight-2)-(ScreenHeight+1)) {
     l.dline++
   }
-  l.line++
+  if l.line >= 100 {
+    l.line = 0
+    l.dline = 0
+  } else {
+    l.line++
+  }
 }
 
 func GetInput() string {
+  gocurses.Doupdate()
   return string(gocurses.Getch())
+}
+
+func (g *Game) SaveGame() {
+  file, err := os.OpenFile("player.sav", os.O_WRONLY|os.O_CREATE, 0600)
+  if err != nil { panic(err) }
+
+  defer func() {
+    if err := file.Close(); err != nil { panic(err) }
+  }()
+
+  encoder := gob.NewEncoder(file)
+  err = encoder.Encode(g)
+  if err != nil { panic(err) }
+}
+
+func (g *Game) LoadGame() {
+  file, err := os.OpenFile("player.sav", os.O_RDONLY, 0600)
+  if err != nil { panic(err) }
+
+  defer func() {
+    if err := file.Close(); err != nil { panic(err) }
+  }()
+
+  decoder := gob.NewDecoder(file)
+  err = decoder.Decode(g)
+  if err != nil { panic(err) }
 }
