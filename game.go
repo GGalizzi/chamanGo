@@ -12,11 +12,11 @@ type Game struct {
 }
 
 func (g *Game) Init() {
+  var y,x Coord
   g.state = "menu"
-  g.Area = NewArea(30,50)
-  g.Player = NewMob(5,5,'@',g.Area)
+  g.Area,y,x = NewArea(130,150)
+  g.Player = NewMob(y,x,'@',g.Area)
   g.Mobs = append(g.Mobs, g.Player)
-  g.Mobs = append(g.Mobs, NewMob(2,2,'L',g.Area))
 }
 
 func (s GameState) Menuing() bool {

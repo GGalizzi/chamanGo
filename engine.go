@@ -5,6 +5,8 @@ import (
   "fmt"
   "os"
   "encoding/gob"
+  "math/rand"
+  "time"
 )
 
 type log struct {
@@ -31,13 +33,17 @@ func Init() {
   gocurses.Cbreak()
   gocurses.Noecho()
   gocurses.Stdscr.Keypad(true)
-  gocurses.Curs_set(0)
+  gocurses.CursSet(0)
+  if !gocurses.HasColors() { panic("No colors") }
+  gocurses.StartColor()
 
   ConsoleHeight,ConsoleWidth = gocurses.Getmaxyx()
   ScreenHeight,ScreenWidth = Percent(75,ConsoleHeight), Percent(90,ConsoleWidth)
 
   debugWindow = gocurses.NewWindow(5,ConsoleWidth, ConsoleHeight-1,1)
   MessageLog.pad  = gocurses.NewPad(100, ScreenWidth)
+
+  rand.Seed( time.Now().UnixNano() )
 }
 
 //Sets the GamePad and WH-WW info to the current area in the game object.
@@ -98,9 +104,11 @@ func DebugLog(s string) {
 func (l *log) log(s string) {
   l.pad.Mvaddstr(l.line,0,fmt.Sprintf("%v %d", s, l.line))
   l.pad.PnoutRefresh(l.dline,0,ScreenHeight+1,0,ConsoleHeight-2,ConsoleWidth)
+  // Checks if we need to scroll the window
   if l.line >= ((ConsoleHeight-2)-(ScreenHeight+1)) {
     l.dline++
   }
+  // Checks if we need to start over on the log. (TEMP)
   if l.line >= 100 {
     l.line = 0
     l.dline = 0
