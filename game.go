@@ -25,7 +25,7 @@ func (s GameState) Menuing() bool {
 }
 
 func (g *Game) Menu() GameState {
-	Write(Percent(25, ConsoleHeight), ConsoleWidth/2, "Welcome to Grogue (name in progress)")
+	Write(Percent(25, ConsoleHeight), ConsoleWidth/2, "Welcome to Chamán")
 	Write(Percent(25, ConsoleHeight)+1, ConsoleWidth/2, "Press any key to continue, press 'L' to load")
 	key := GetInput()
 	if key == "L" {

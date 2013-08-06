@@ -50,4 +50,11 @@ func (m *Mob) Move(y, x Coord) {
 
 func (attacker *Mob) attack(defender *Mob) {
   defender.Hp -= attacker.Att - defender.Def
+  if defender.Hp <= 0 {
+    defender.die()
+  }
+}
+
+func (m *Mob) die() {
+  m.ch = '%'
 }
