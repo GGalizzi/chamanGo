@@ -49,6 +49,10 @@ func Init() {
 	MessageLog.pad = gocurses.NewPad(100, ScreenWidth)
 
 	rand.Seed(time.Now().UnixNano())
+
+
+  // Color pairs
+  gocurses.InitPair(1, gocurses.COLOR_RED, gocurses.COLOR_BLACK)
 }
 
 //Sets the GamePad and WH-WW info to the current area in the game object.
@@ -65,9 +69,15 @@ func Clear() {
 	gocurses.Clear()
 }
 
-func Draw(y Coord, x Coord, ch rune) {
+func Draw(y,x Coord, ch rune) {
 	GamePad.Mvaddch(int(y), int(x), ch)
 	//RefreshPad(int(y),int(x))
+}
+
+func DrawColors(y,x Coord, ch rune, col int) {
+  GamePad.Attron(gocurses.ColorPair(col))
+  GamePad.Mvaddch(int(y), int(x), ch)
+  GamePad.Attroff(gocurses.ColorPair(col))
 }
 
 func DrawMap(a *Area) {

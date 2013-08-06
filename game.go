@@ -47,6 +47,13 @@ func (s GameState) Quiting() bool {
 
 func (g *Game) Output() {
 	DrawMap(g.Area)
+  for _, i := range g.Area.Items {
+    if i.Hp <= 0 {
+      DrawColors(i.Y, i.X, i.ch, 1)
+      continue
+    }
+    //Draw(i.Y, i.X, i.ch)
+  }
 	for _, m := range g.Area.Mobs {
 		Draw(m.Y, m.X, m.ch)
 	}

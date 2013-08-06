@@ -17,6 +17,7 @@ type Tile struct {
 type Area struct {
   Tiles  []Tile
   Mobs   []*Mob
+  Items  []*Mob
 
   Height int
   Width  int
@@ -73,7 +74,7 @@ func NewArea(h, w int) (*Area, Coord, Coord) {
        /**/
     Write(51, 2, fmt.Sprint("Done"))
   }
-  return &Area{t[nIts-1], nil, h, w}, ry, rx
+  return &Area{t[nIts-1], nil,nil, h, w}, ry, rx
 }
 
 // Returns if the tile in given coords has BlockMove attribute.
@@ -83,7 +84,7 @@ func NewArea(h, w int) (*Area, Coord, Coord) {
 func (a *Area) IsBlocking(y, x Coord) (blocks bool, hasMob *Mob) {
   blocks = a.Tiles[int(x)+int(y)*a.Width].BlockMove
   for _, m := range a.Mobs {
-    if !m.dead && m.X == x && m.Y == y { hasMob = m }
+    if m.Hp > 0 && m.X == x && m.Y == y { hasMob = m }
   }
   return
 }
