@@ -8,8 +8,9 @@ type Mob struct {
 	Y    Coord
 	X    Coord
 	ch   rune
-	area *Area // Area it's in.
+  dead bool
 
+	area *Area // Area it's in.
   *stats
 }
 
@@ -22,7 +23,7 @@ type stats struct {
 
 //Constructor for pointer allocation
 func NewMob(y Coord, x Coord, ch rune, area *Area) *Mob {
-	return &Mob{y, x, ch, area, nil}
+	return &Mob{y, x, ch, false, area, nil}
 }
 
 func newStats(hp,max,att,def int) *stats {
@@ -30,7 +31,7 @@ func newStats(hp,max,att,def int) *stats {
 }
 
 func NewMobWithStats(y Coord, x Coord, ch rune, area *Area, hp,max,att,def int) *Mob {
-  return &Mob{y,x,ch,area,newStats(hp,max,att,def)}
+  return &Mob{y,x,ch,false,area,newStats(hp,max,att,def)}
 }
 
 func (m *Mob) Move(y, x Coord) {
@@ -57,4 +58,5 @@ func (attacker *Mob) attack(defender *Mob) {
 
 func (m *Mob) die() {
   m.ch = '%'
+  m.dead = true
 }

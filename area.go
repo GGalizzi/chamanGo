@@ -83,7 +83,7 @@ func NewArea(h, w int) (*Area, Coord, Coord) {
 func (a *Area) IsBlocking(y, x Coord) (blocks bool, hasMob *Mob) {
   blocks = a.Tiles[int(x)+int(y)*a.Width].BlockMove
   for _, m := range a.Mobs {
-    if m.X == x && m.Y == y { hasMob = m }
+    if !m.dead && m.X == x && m.Y == y { hasMob = m }
   }
   return
 }
