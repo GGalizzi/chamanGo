@@ -76,10 +76,14 @@ func NewArea(h, w int) (*Area, Coord, Coord) {
   return &Area{t[nIts-1], nil, h, w}, ry, rx
 }
 
-func (a *Area) IsBlocking(y, x Coord) (blocks, hasMob bool) {
+// Returns if the tile in given coords has BlockMove attribute.
+// Also checks if there's a mob in that tile, returning
+// a pointer to it if there is.
+// Otherwise hasMob is nil.
+func (a *Area) IsBlocking(y, x Coord) (blocks bool, hasMob *Mob) {
   blocks = a.Tiles[int(x)+int(y)*a.Width].BlockMove
   for _, m := range a.Mobs {
-    if m.X == x && m.Y == y { hasMob = true }
+    if m.X == x && m.Y == y { hasMob = m }
   }
   return
 }

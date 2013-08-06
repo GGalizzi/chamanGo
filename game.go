@@ -14,10 +14,10 @@ type Game struct {
 func (g *Game) Init() {
 	var y, x Coord
 	g.state = "menu"
-	g.Area, y, x = NewArea(40, 50)
-	g.Player = NewMobWithStats(y, x, '@', g.Area, 30,10,5)
+	g.Area, y, x = NewArea(240, 250)
+	g.Player = NewMobWithStats(y, x, '@', g.Area, 30,30,10,5)
 	g.Area.Mobs = append(g.Area.Mobs, g.Player)
-  g.Area.Mobs = append(g.Area.Mobs, NewMobWithStats(y-1,x-1, 'O', g.Area,20,5,0))
+  g.Area.Mobs = append(g.Area.Mobs, NewMobWithStats(y-1,x-1, 'O', g.Area,20,30,5,0))
 }
 
 func (s GameState) Menuing() bool {
@@ -29,9 +29,15 @@ func (g *Game) Menu() GameState {
 	Write(Percent(25, ConsoleHeight)+1, ConsoleWidth/2, "Press any key to continue, press 'L' to load")
 	key := GetInput()
 	if key == "L" {
+    g.Init()
 		g.LoadGame()
+    SetPad(g.Area.Height, g.Area.Width)
+    DrawMap(g.Area)
+    Clear()
+    return "playing"
 	}
 	Clear()
+  g.Init()
 	return "playing"
 }
 
@@ -45,6 +51,7 @@ func (g *Game) Output() {
 		Draw(m.Y, m.X, m.ch)
 	}
 	RefreshPad(int(g.Player.Y), int(g.Player.X))
+  g.Player.UpdateStats()
 	DebugLog(fmt.Sprintf("X: %d, Y: %d", g.Player.X, g.Player.Y))
 }
 func (g *Game) Input() {
@@ -68,8 +75,11 @@ func (g *Game) Input() {
 	case "7":
 		g.Player.Move(-1, -1)
 	case "S":
-		g.SaveGame()
-		MessageLog.log("Game Saved")
+    if Confirm("Save and Quit? Y/N") {
+      g.SaveGame()
+      MessageLog.log("Game Saved")
+      g.state = "quit"
+    }
 	case "Q":
 		g.state = "quit"
 	}

@@ -19,6 +19,8 @@ var GamePad *gocurses.Window     // Pad used to display play screen
 var debugWindow *gocurses.Window // Window used to show debug information (X,Y,stuff)
 var MessageLog log
 
+var StatsWindow *gocurses.Window // Window used to show players stats.
+
 var ConsoleHeight int // height and
 var ConsoleWidth int  // width of the whole console the game was opened in
 
@@ -40,7 +42,8 @@ func Init() {
 	gocurses.StartColor()
 
 	ConsoleHeight, ConsoleWidth = gocurses.Getmaxyx()
-	ScreenHeight, ScreenWidth = Percent(75, ConsoleHeight), Percent(90, ConsoleWidth)
+	ScreenHeight, ScreenWidth = Percent(85, ConsoleHeight), Percent(70, ConsoleWidth)
+  StatsWindow = gocurses.NewWindow(ScreenHeight, ConsoleWidth - ScreenWidth, 0, ScreenWidth+1)
 
 	debugWindow = gocurses.NewWindow(5, ConsoleWidth, ConsoleHeight-1, 1)
 	MessageLog.pad = gocurses.NewPad(100, ScreenWidth)
@@ -71,6 +74,19 @@ func DrawMap(a *Area) {
 	for y := 0; y < a.Height; y++ {
 		for x := 0; x < a.Width; x++ {
 			GamePad.Mvaddch(y, x, a.Tiles[x+y*a.Width].Ch)
+      // Debug
+      if a.Tiles[x+y*a.Width].BlockMove &&
+        a.Tiles[x+y*a.Width].Ch != '#' {
+        GamePad.Mvaddch(y,x, '!')
+        a.Tiles[x+y*a.Width].BlockMove = false
+      }
+
+      if !a.Tiles[x+y*a.Width].BlockMove &&
+        a.Tiles[x+y*a.Width].Ch != '.' {
+          GamePad.Mvaddch(y,x, '_')
+        }
+
+      // Debug
 		}
 	}
 }
@@ -116,9 +132,21 @@ func (l *log) log(s string) {
 	}
 }
 
+func (p *Mob) UpdateStats() {
+  StatsWindow.Mvaddstr(1,0, fmt.Sprintf("HP: %d/%d", p.Hp, p.MaxHp))
+  StatsWindow.NoutRefresh()
+}
+
 func GetInput() string {
 	gocurses.Doupdate()
 	return string(gocurses.Getch())
+}
+
+func Confirm(q string) bool {
+  Write(ScreenHeight/2,ScreenWidth/2,q)
+  key := GetInput()
+  if key == "Y" { return true }
+  return false
 }
 
 func (g *Game) SaveGame() {

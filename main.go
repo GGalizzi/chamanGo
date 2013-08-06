@@ -6,7 +6,8 @@ func main() {
 	defer End() // defer endwin
 
 	var g Game
-	g.Init()
+  g.state = "menu"
+	//g.Init()
 
 	for !g.state.Quiting() {
 		if g.state.Menuing() {
