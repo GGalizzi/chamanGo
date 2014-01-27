@@ -34,9 +34,9 @@ func NewMobWithStats(y Coord, x Coord, ch rune, area *Area, hp,max,att,def int) 
 }
 
 func (m *Mob) Move(y, x Coord) {
+  //MessageLog.log(fmt.Sprintf("Current %d, %d, Going to %d, %d", m.X, m.Y, m.X+x, m.Y+y))
   if blocks, hasMob := m.area.IsBlocking(m.Y+y, m.X+x); !blocks {
-		//Draw(m.Y,m.X,' ') // TEMP:Will have to check previous tile.
-    if hasMob == nil {
+    if hasMob == nil || m == hasMob  {
       m.Y += y
       m.X += x
       return
@@ -45,7 +45,9 @@ func (m *Mob) Move(y, x Coord) {
     MessageLog.log(fmt.Sprintf("Mob there, HP: %d", hasMob.Hp))
     return
 	}
-	MessageLog.log("You bump against a wall.")
+  if m.ch == '@' {
+    MessageLog.log("You bump against a wall.")
+  }
 }
 
 func (attacker *Mob) attack(defender *Mob) {

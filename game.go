@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type GameState string
 
 type Game struct {
@@ -17,7 +15,7 @@ func (g *Game) Init() {
 	g.Area, y, x = NewArea(240, 250)
 	g.Player = NewMobWithStats(y, x, '@', g.Area, 30,30,10,5)
 	g.Area.Mobs = append(g.Area.Mobs, g.Player)
-  g.Area.Mobs = append(g.Area.Mobs, NewMobWithStats(y-1,x-1, 'O', g.Area,20,30,5,0))
+  g.Area.Mobs = append(g.Area.Mobs, NewMobWithStats(y-10,x-1, 'O', g.Area,20,30,15,0))
 }
 
 func (s GameState) Menuing() bool {
@@ -59,7 +57,6 @@ func (g *Game) Output() {
 	}
 	RefreshPad(int(g.Player.Y), int(g.Player.X))
   g.Player.UpdateStats()
-	DebugLog(fmt.Sprintf("X: %d, Y: %d", g.Player.X, g.Player.Y))
 }
 func (g *Game) Input() {
 	key := GetInput()
@@ -90,4 +87,6 @@ func (g *Game) Input() {
 	case "Q":
 		g.state = "quit"
 	}
+
+  g.processAi()
 }

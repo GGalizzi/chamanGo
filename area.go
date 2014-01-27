@@ -25,7 +25,7 @@ type Area struct {
 
 // Generates a new area, and returns the coordinates the player will spawn in.
 func NewArea(h, w int) (*Area, Coord, Coord) {
-  nIts := 6 // quantity of iterations, will be a parameter or calculation based on size of area
+  nIts := 4 // quantity of iterations, will be a parameter or calculation based on size of area
   var ry, rx Coord
   ry, rx = 0, 0
   t := make([][]Tile, nIts)
@@ -84,7 +84,10 @@ func NewArea(h, w int) (*Area, Coord, Coord) {
 func (a *Area) IsBlocking(y, x Coord) (blocks bool, hasMob *Mob) {
   blocks = a.Tiles[int(x)+int(y)*a.Width].BlockMove
   for _, m := range a.Mobs {
-    if m.Hp > 0 && m.X == x && m.Y == y { hasMob = m }
+    if m.Hp > 0 && m.X == x && m.Y == y {
+      hasMob = m
+      return
+    }
   }
   return
 }

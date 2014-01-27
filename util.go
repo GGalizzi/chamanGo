@@ -1,5 +1,7 @@
 package main
 
+import "math"
+
 func Min(a ...int) int {
 	min := int(^uint(0) >> 1) // largest possible int
 	for _, i := range a {
@@ -51,4 +53,25 @@ func RuneFromInt(i int) rune {
 		return '7'
 	}
 	return 'X'
+}
+
+func Round(x float64) int {
+  prec := 1
+  var rounder float64;
+  pow := math.Pow(10, float64(prec))
+  intermed := x * pow
+  _, frac := math.Modf(intermed)
+  intermed += .5
+  x = .5
+  if frac < 0.0 {
+    x = -.5
+    intermed -= 1
+  }
+  if frac >= x {
+    rounder = math.Ceil(intermed)
+  } else {
+    rounder = math.Floor(intermed)
+  }
+
+  return int(rounder / pow)
 }
