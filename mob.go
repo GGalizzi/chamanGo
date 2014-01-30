@@ -65,4 +65,8 @@ func (m *Mob) die() {
       m.area.Items = append(m.area.Items, m)
     }
   }
+
+  if m == G.Player {
+    G.Death()
+  }
 }

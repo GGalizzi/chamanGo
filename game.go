@@ -39,6 +39,15 @@ func (g *Game) Menu() GameState {
 	return "playing"
 }
 
+func (g *Game) Death() {
+  Clear()
+  Write(Percent(25, ConsoleHeight), ConsoleWidth/2, "Your body has perished")
+  Write(Percent(25, ConsoleHeight)+1, ConsoleWidth/2, "You are in the spirit plane now.")
+  GetInput()
+  g.state = "quit"
+}
+
+
 func (s GameState) Quiting() bool {
 	return s == "quit"
 }

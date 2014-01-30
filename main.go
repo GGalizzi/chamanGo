@@ -1,21 +1,21 @@
 package main
 
+var G Game
 func main() {
 
 	Init()      // Start curses stuff
 	defer End() // defer endwin
 
-	var g Game
-  g.state = "menu"
+  G.state = "menu"
 	//g.Init()
 
-	for !g.state.Quiting() {
-		if g.state.Menuing() {
-			g.state = g.Menu()
+	for !G.state.Quiting() {
+		if G.state.Menuing() {
+			G.state = G.Menu()
 			continue
 		}
-		g.Output()
-		g.Input()
+		G.Output()
+		G.Input()
 	}
 
 }
