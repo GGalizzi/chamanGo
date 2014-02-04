@@ -43,16 +43,15 @@ func Init() {
 
 	ConsoleHeight, ConsoleWidth = gocurses.Getmaxyx()
 	ScreenHeight, ScreenWidth = Percent(85, ConsoleHeight), Percent(70, ConsoleWidth)
-  StatsWindow = gocurses.NewWindow(ScreenHeight, ConsoleWidth - ScreenWidth, 0, ScreenWidth+1)
+	StatsWindow = gocurses.NewWindow(ScreenHeight, ConsoleWidth-ScreenWidth, 0, ScreenWidth+1)
 
 	debugWindow = gocurses.NewWindow(5, ConsoleWidth, ConsoleHeight-1, 1)
 	MessageLog.pad = gocurses.NewPad(100, ScreenWidth)
 
 	rand.Seed(time.Now().UnixNano())
 
-
-  // Color pairs
-  gocurses.InitPair(1, gocurses.COLOR_RED, gocurses.COLOR_BLACK)
+	// Color pairs
+	gocurses.InitPair(1, gocurses.COLOR_RED, gocurses.COLOR_BLACK)
 }
 
 //Sets the GamePad and WH-WW info to the current area in the game object.
@@ -69,34 +68,34 @@ func Clear() {
 	gocurses.Clear()
 }
 
-func Draw(y,x Coord, ch rune) {
+func Draw(y, x Coord, ch rune) {
 	GamePad.Mvaddch(int(y), int(x), ch)
 	//RefreshPad(int(y),int(x))
 }
 
-func DrawColors(y,x Coord, ch rune, col int) {
-  GamePad.Attron(gocurses.ColorPair(col))
-  GamePad.Mvaddch(int(y), int(x), ch)
-  GamePad.Attroff(gocurses.ColorPair(col))
+func DrawColors(y, x Coord, ch rune, col int) {
+	GamePad.Attron(gocurses.ColorPair(col))
+	GamePad.Mvaddch(int(y), int(x), ch)
+	GamePad.Attroff(gocurses.ColorPair(col))
 }
 
 func DrawMap(a *Area) {
 	for y := 0; y < a.Height; y++ {
 		for x := 0; x < a.Width; x++ {
 			GamePad.Mvaddch(y, x, a.Tiles[x+y*a.Width].Ch)
-      // Debug
-      if a.Tiles[x+y*a.Width].BlockMove &&
-        a.Tiles[x+y*a.Width].Ch != '#' {
-        GamePad.Mvaddch(y,x, '!')
-        a.Tiles[x+y*a.Width].BlockMove = false
-      }
+			// Debug
+			if a.Tiles[x+y*a.Width].BlockMove &&
+				a.Tiles[x+y*a.Width].Ch != '#' {
+				GamePad.Mvaddch(y, x, '!')
+				a.Tiles[x+y*a.Width].BlockMove = false
+			}
 
-      if !a.Tiles[x+y*a.Width].BlockMove &&
-        a.Tiles[x+y*a.Width].Ch != '.' {
-          GamePad.Mvaddch(y,x, '_')
-        }
+			if !a.Tiles[x+y*a.Width].BlockMove &&
+				a.Tiles[x+y*a.Width].Ch != '.' {
+				GamePad.Mvaddch(y, x, '_')
+			}
 
-      // Debug
+			// Debug
 		}
 	}
 }
@@ -143,8 +142,8 @@ func (l *log) log(s string) {
 }
 
 func (p *Mob) UpdateStats() {
-  StatsWindow.Mvaddstr(1,0, fmt.Sprintf("HP: %d/%d", p.Hp, p.MaxHp))
-  StatsWindow.NoutRefresh()
+	StatsWindow.Mvaddstr(1, 0, fmt.Sprintf("HP: %d/%d", p.Hp, p.MaxHp))
+	StatsWindow.NoutRefresh()
 }
 
 func GetInput() string {
@@ -153,10 +152,12 @@ func GetInput() string {
 }
 
 func Confirm(q string) bool {
-  Write(ScreenHeight/2,ScreenWidth/2,q)
-  key := GetInput()
-  if key == "Y" { return true }
-  return false
+	Write(ScreenHeight/2, ScreenWidth/2, q)
+	key := GetInput()
+	if key == "Y" {
+		return true
+	}
+	return false
 }
 
 func (g *Game) SaveGame() {
